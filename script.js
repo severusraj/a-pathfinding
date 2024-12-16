@@ -6,10 +6,9 @@ let startNode = null, endNode = null, isRunning = false;
 let animationDelay = parseInt(speedControl.value);
 const grid = [];
 
-// Create grid
 function createGrid() {
-  gridElement.style.gridTemplateColumns = `repeat(${cols}, 30px)`;
-  gridElement.style.gridTemplateRows = `repeat(${rows}, 30px)`;
+  gridElement.style.gridTemplateColumns = `repeat(${cols}, 25px)`;
+  gridElement.style.gridTemplateRows = `repeat(${rows}, 25px)`;
 
   for (let r = 0; r < rows; r++) {
     grid[r] = [];
@@ -19,14 +18,30 @@ function createGrid() {
       cell.dataset.row = r;
       cell.dataset.col = c;
       grid[r][c] = { element: cell, type: "empty" };
+
       gridElement.appendChild(cell);
 
       // Add event listeners for interactions
       cell.addEventListener("mousedown", (e) => handleMouseDown(e, r, c));
       cell.addEventListener("contextmenu", (e) => e.preventDefault());
+      cell.addEventListener("mouseenter", () => handleHover(r, c, true));
+      cell.addEventListener("mouseleave", () => handleHover(r, c, false));
     }
   }
 }
+function handleHover(row, col, isHovering) {
+  const cell = grid[row][col];
+  if (isHovering) {
+    if (cell.type === "empty") {
+      cell.element.classList.add("hover-add");
+    } else if (cell.type === "obstacle") {
+      cell.element.classList.add("hover-remove");
+    }
+  } else {
+    cell.element.classList.remove("hover-add", "hover-remove");
+  }
+}
+
 
 // Handle cell clicks
 function handleMouseDown(e, row, col) {
