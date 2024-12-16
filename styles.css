@@ -1,0 +1,79 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    background-color: #f4f4f4;
+  }
+  
+  h1 {
+    margin-top: 20px;
+  }
+  
+  #grid-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
+  }
+  
+  #grid {
+    display: grid;
+    border: 2px solid #000;
+    box-sizing: border-box;
+    margin-right: 20px;
+  }
+  
+  .cell {
+    width: 30px;
+    height: 30px;
+    border: 1px solid #ccc;
+    transition: background-color 0.3s ease;
+  }
+  
+  .cell.start {
+    background-color: #4CAF50;
+  }
+  
+  .cell.end {
+    background-color: #FF5733;
+  }
+  
+  .cell.obstacle {
+    background-color: #333;
+  }
+  
+  .cell.visited {
+    background-color: #A2DFF7;
+  }
+  
+  .cell.path {
+    background-color: #FFDD57;
+  }
+  
+  #controls {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+  }
+  
+  button {
+    margin: 5px;
+    padding: 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  button:hover {
+    background-color: #45a049;
+  }
+  
+  #status {
+    font-size: 16px;
+    margin-top: 20px;
+  }
+  
