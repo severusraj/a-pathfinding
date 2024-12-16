@@ -8,17 +8,47 @@
 </head>
 <body>
   <h1>A* Pathfinding Visualization</h1>
+
   <div id="grid-container">
     <div id="grid"></div>
     <div id="controls">
-      <div id="status">Status: Ready</div>
+      <button onclick="setStart()">Set Start</button>
+      <button onclick="setEnd()">Set End</button>
+      <button onclick="runAlgorithm()">Run Algorithm</button>
+      <button onclick="resetGrid()">Reset Grid</button>
+      <button onclick="randomizeObstacles()">Randomize Obstacles</button>
     </div>
   </div>
-  <p>Controls:
-    <br>Left click to add obstacles, right click to remove obstacles.
-    <br>S to set the start, E to set the end, R to reset.
-    <br>↑/↓ to adjust animation speed.
-  </p>
+
+  <div id="legend">
+    <p><span class="cell legend-cell start"></span> Start</p>
+    <p><span class="cell legend-cell end"></span> End</p>
+    <p><span class="cell legend-cell obstacle"></span> Obstacle</p>
+    <p><span class="cell legend-cell visited"></span> Visited</p>
+    <p><span class="cell legend-cell path"></span> Path</p>
+  </div>
+
+  <div id="status">Status: Waiting for input...</div>
+
+  <div id="speed-control">
+    <label for="speed">Animation Speed:</label>
+    <input type="range" id="speed" min="50" max="500" value="100" onchange="updateSpeed(this.value)">
+  </div>
+
+  <details>
+    <summary>How A* Algorithm Works</summary>
+    <p>The A* algorithm finds the shortest path between a start and end point. It uses a heuristic to prioritize cells based on their estimated distance to the end. It considers both the distance already traveled (g) and the estimated distance to the goal (h), where f = g + h.</p>
+  </details>
+
+  <p><strong>Instructions:</strong></p>
+  <ul>
+    <li>Use the buttons to set the start and end points, or use the "S" and "E" keys.</li>
+    <li>Left-click on cells to create obstacles; right-click to remove them.</li>
+    <li>Press "Space" or click "Run Algorithm" to begin pathfinding.</li>
+    <li>Use the slider to adjust animation speed.</li>
+    <li>Press "R" or click "Reset" to clear the grid.</li>
+  </ul>
+
   <script src="script.js"></script>
 </body>
 </html>

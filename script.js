@@ -1,13 +1,15 @@
 const gridElement = document.getElementById("grid");
+const statusElement = document.getElementById("status");
+const speedControl = document.getElementById("speed");
 const rows = 20, cols = 20;
 let startNode = null, endNode = null, isRunning = false;
-let animationDelay = 100; // in ms
+let animationDelay = parseInt(speedControl.value);
 const grid = [];
 
 // Create grid
 function createGrid() {
-  gridElement.style.gridTemplateColumns = `repeat(${cols}, 25px)`;
-  gridElement.style.gridTemplateRows = `repeat(${rows}, 25px)`;
+  gridElement.style.gridTemplateColumns = `repeat(${cols}, 30px)`;
+  gridElement.style.gridTemplateRows = `repeat(${rows}, 30px)`;
 
   for (let r = 0; r < rows; r++) {
     grid[r] = [];
@@ -16,7 +18,7 @@ function createGrid() {
       cell.classList.add("cell");
       cell.dataset.row = r;
       cell.dataset.col = c;
-      grid[r][c] = { element: cell, type: "empty" }; // type: "empty", "start", "end", "obstacle"
+      grid[r][c] = { element: cell, type: "empty" };
       gridElement.appendChild(cell);
 
       // Add event listeners for interactions
@@ -45,35 +47,11 @@ function handleMouseDown(e, row, col) {
   }
 }
 
-// Handle keyboard controls
-document.addEventListener("keydown", (e) => {
-  switch (e.key.toLowerCase()) {
-    case "s":
-      setStart();
-      break;
-    case "e":
-      setEnd();
-      break;
-    case "r":
-      resetGrid();
-      break;
-    case "g":
-      randomizeObstacles();
-      break;
-    case " ":
-      if (!isRunning) runAlgorithm();
-      break;
-    case "f":
-      toggleFreeMovement();
-      break;
-    case "arrowup":
-      animationDelay = Math.max(50, animationDelay - 50);
-      break;
-    case "arrowdown":
-      animationDelay += 50;
-      break;
-  }
-});
+// Update animation speed
+function updateSpeed(value) {
+  animationDelay = parseInt(value);
+  statusElement.textContent = `Animation speed set to ${animationDelay}ms`;
+}
 
 // Set start and end points
 function setStart() {
@@ -81,6 +59,7 @@ function setStart() {
   startNode = getRandomEmptyCell();
   startNode.type = "start";
   startNode.element.classList.add("start");
+  statusElement.textContent = "Start point set.";
 }
 
 function setEnd() {
@@ -88,6 +67,7 @@ function setEnd() {
   endNode = getRandomEmptyCell();
   endNode.type = "end";
   endNode.element.classList.add("end");
+  statusElement.textContent = "End point set.";
 }
 
 // Reset grid
@@ -97,6 +77,7 @@ function resetGrid() {
     cell.element.className = "cell";
   }));
   startNode = endNode = null;
+  statusElement.textContent = "Grid reset.";
 }
 
 // Randomize obstacles
@@ -107,23 +88,14 @@ function randomizeObstacles() {
       cell.element.classList.add("obstacle");
     }
   }));
-}
-
-// Get a random empty cell
-function getRandomEmptyCell() {
-  let cell;
-  do {
-    const row = Math.floor(Math.random() * rows);
-    const col = Math.floor(Math.random() * cols);
-    cell = grid[row][col];
-  } while (cell.type !== "empty");
-  return cell;
+  statusElement.textContent = "Obstacles randomized.";
 }
 
 // Run A* algorithm
 async function runAlgorithm() {
   if (!startNode || !endNode) return alert("Set both start and end points!");
   isRunning = true;
+  statusElement.textContent = "Running A* algorithm...";
 
   const openSet = [startNode];
   const closedSet = [];
@@ -140,8 +112,9 @@ async function runAlgorithm() {
     const current = openSet.shift();
 
     if (current === endNode) {
-      reconstructPath(cameFrom, current);
+      await reconstructPath(cameFrom, current);
       isRunning = false;
+      statusElement.textContent = "Path found!";
       return;
     }
 
@@ -169,6 +142,7 @@ async function runAlgorithm() {
 
   alert("No path found!");
   isRunning = false;
+  statusElement.textContent = "No path found!";
 }
 
 // Heuristic function
@@ -204,6 +178,48 @@ async function reconstructPath(cameFrom, current) {
 function delay(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
+
+// Get a random empty cell
+function getRandomEmptyCell() {
+  let cell;
+  do {
+    const row = Math.floor(Math.random() * rows);
+    const col = Math.floor(Math.random() * cols);
+    cell = grid[row][col];
+  } while (cell.type !== "empty");
+  return cell;
+}
+// Add keyboard controls
+document.addEventListener("keydown", (e) => {
+    if (isRunning) return; // Prevent actions during the algorithm's execution
+  
+    switch (e.key.toLowerCase()) {
+      case "s":
+        setStart();
+        break;
+      case "e":
+        setEnd();
+        break;
+      case "r":
+        resetGrid();
+        break;
+      case "g":
+        randomizeObstacles();
+        break;
+      case " ":
+        runAlgorithm();
+        break;
+      case "arrowup":
+        updateSpeed(Math.max(animationDelay - 50, 50));
+        speedControl.value = animationDelay; // Sync slider with speed
+        break;
+      case "arrowdown":
+        updateSpeed(animationDelay + 50);
+        speedControl.value = animationDelay; // Sync slider with speed
+        break;
+    }
+  });
+  
 
 // Initialize grid
 createGrid();
